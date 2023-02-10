@@ -1,0 +1,18 @@
+{
+	"Disabled": [
+		false,
+		"bool"
+	],
+	"Disabled_Description": [
+		"Setting to true disables the module",
+		"string"
+	],
+	"DisplayOwnerSourcePath": [
+		false,
+		"bool"
+	],
+	"DisplayOwnerSourcePath_Description": [
+		"Setting to true displays owner source path of folders in the tree view and owner source path of files that are shared widout folder",
+		"string"
+	]
+}
