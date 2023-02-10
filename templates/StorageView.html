@@ -1,0 +1,43 @@
+<div class="item canSelect" data-bind="css: {'selected': type === $root.storageType()}">
+	<a href="javascript: void(0);" class="title" data-bind="
+		click: function () { $root.routeFiles(type); }">
+		<span class="name">
+			<span class="icon" data-bind="css: 'type' + type"></span>
+			<span class="text" data-bind="text: displayName"></span>
+		</span>
+	</a>
+</div>
+<!-- ko foreach: ownersData -->
+	<div class="item">
+		<span class="title">
+			<span class="name">
+				<span class="text" data-bind="text: owner"></span>
+			</span>
+		</span>
+	</div>
+	<!-- ko if: hasFiles -->
+		<div class="item canSelect shared_folder_level1" data-bind="click: function () { $root.routeFiles($parent.type); }">
+			<a href="javascript: void(0);" class="title">
+				<span class="name">
+					<span class="text">Files</span>
+				</span>
+			</a>
+		</div>
+	<!-- /ko -->
+	<!-- ko foreach: folders -->
+		<div class="item accordion canSelect shared_folder_level1"
+			 data-bind="css: {'selected': fullPath === $root.currentPath()},
+			 click: function () { $root.routeFiles(type, fullPath); }"
+		>
+			<a href="javascript: void(0);" class="title">
+				<span class="name">
+					<span class="collapse_handler"
+						  data-bind="css: {'expanded': expanded(), 'collapsed': !expanded()},
+						  click: toggleExpanded"
+					></span>
+					<span class="text" data-bind="text: name"></span>
+				</span>
+			</a>
+		</div>
+	<!-- /ko -->
+<!-- /ko -->
