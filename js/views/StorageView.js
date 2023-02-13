@@ -30,7 +30,7 @@ function CStorageView()
 			if (requestParams.Path === '' && requestParams.Pattern === '') {
 				this.parseRootSharedResponse(oParams.Response);
 			}
-			if (this.currentOwner() !== '') {
+			if (requestParams.Path === '' && this.currentOwner() !== '') {
 				const rawItems = Types.pArray(oParams.Response && oParams.Response.Result && oParams.Response.Result.Items);
 				if (Array.isArray(rawItems)) {
 					oParams.Response.Result.Items = rawItems

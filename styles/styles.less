@@ -1,8 +1,8 @@
 @sharedFolderCustomOffset: 10px;
 
 .sharedFolderCustomOffset(@level) when (@level < 20) {
-	.shared_folder_level@{level} {
-		padding-left: @sharedFolderCustomOffset * @level !important;
+	.shared_files_custom__folder_level@{level} .title {
+		padding-left: 30px + @sharedFolderCustomOffset * @level !important;
 		html.rtl & {
 			padding-left: 0px !important;
 			padding-right: @sharedFolderCustomOffset !important;
@@ -11,4 +11,4 @@
 	.sharedFolderCustomOffset(@level + 1);
 }
 
-.sharedFolderCustomOffset(1);
+.sharedFolderCustomOffset(0);

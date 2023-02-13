@@ -1,13 +1,12 @@
-<div class="item">
+<div class="item shared_files_custom__heading">
 	<span class="title">
 		<span class="name">
-			<span class="icon" data-bind="css: 'type' + type"></span>
 			<span class="text" data-bind="i18n: {'key': 'FILESWEBCLIENT/LABEL_SHARED_STORAGE'}"></span>
 		</span>
 	</span>
 </div>
 <!-- ko foreach: ownersData -->
-	<div class="item">
+	<div class="item shared_files_custom__heading shared_files_custom__folder_level0">
 		<span class="title">
 			<span class="name">
 				<span class="text" data-bind="text: owner"></span>
@@ -15,7 +14,7 @@
 		</span>
 	</div>
 	<!-- ko if: hasFiles -->
-		<div class="item canSelect shared_folder_level1"
+		<div class="item canSelect shared_files_custom__folder_level1"
 			 data-bind="css: {'selected': owner === $parent.currentOwner()},
 			 click: function () { $parent.routeOwnerFiles(owner); }"
 		>
