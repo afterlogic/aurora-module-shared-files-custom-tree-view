@@ -1,11 +1,10 @@
-<div class="item canSelect" data-bind="css: {'selected': type === $root.storageType()}">
-	<a href="javascript: void(0);" class="title" data-bind="
-		click: function () { $root.routeFiles(type); }">
+<div class="item">
+	<span class="title">
 		<span class="name">
 			<span class="icon" data-bind="css: 'type' + type"></span>
-			<span class="text" data-bind="text: displayName"></span>
+			<span class="text" data-bind="i18n: {'key': 'FILESWEBCLIENT/LABEL_SHARED_STORAGE'}"></span>
 		</span>
-	</a>
+	</span>
 </div>
 <!-- ko foreach: ownersData -->
 	<div class="item">
@@ -16,10 +15,13 @@
 		</span>
 	</div>
 	<!-- ko if: hasFiles -->
-		<div class="item canSelect shared_folder_level1" data-bind="click: function () { $root.routeFiles($parent.type); }">
+		<div class="item canSelect shared_folder_level1"
+			 data-bind="css: {'selected': owner === $parent.currentOwner()},
+			 click: function () { $parent.routeOwnerFiles(owner); }"
+		>
 			<a href="javascript: void(0);" class="title">
 				<span class="name">
-					<span class="text">Files</span>
+					<span class="text" data-bind="i18n: {'key': '%MODULENAME%/LABEL_OWNER_FILES'}"></span>
 				</span>
 			</a>
 		</div>
