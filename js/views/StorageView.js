@@ -107,6 +107,7 @@ CStorageView.prototype.onRoute = function (params) {
 	if (params.Storage !== this.type) {
 		this.currentPath('');
 		this.currentOwner('');
+		this.isFirstRoute = false;
 		return;
 	}
 
