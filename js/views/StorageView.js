@@ -22,6 +22,21 @@ function CStorageView()
 	this.ownersData = ko.observableArray([]);
 	this.currentOwner = ko.observable('');
 	this.currentPath = ko.observable('');
+	this.currentPath.subscribe(function (v) {
+		if (v) {			
+			const parentPath = v.substring(0, v.lastIndexOf('/'));
+			let parentFolderView;
+			this.ownersData().forEach((ownerData) => {
+				if (!parentFolderView) {
+					parentFolderView = this.findDeepFolderView(ownerData.folders, parentPath);
+				}
+			});
+	
+			if (parentFolderView) {
+				parentFolderView.toggleExpanded(true);
+			}
+		}
+	}, this);
 
 	this.isFirstRoute = true;
 
@@ -54,6 +69,20 @@ function CStorageView()
 }
 
 CStorageView.prototype.ViewTemplate = '%ModuleName%_StorageView';
+
+CStorageView.prototype.findDeepFolderView = function (folders, path) {
+	let foundFolderView;
+	foundFolderView = folders.find(folderView => folderView.fullPath() === path);
+
+	if (!foundFolderView) {
+		folders.forEach((folderView) => {
+			if (!foundFolderView) {
+				foundFolderView = this.findDeepFolderView(folderView.subfolders(), path);
+			}
+		});
+	}
+	return foundFolderView;
+};
 
 CStorageView.prototype.findFolderView = function (owner, fullPath) {
 	const ownerData = this.ownersData()
@@ -103,7 +132,7 @@ CStorageView.prototype.onShow = function () {
 };
 
 CStorageView.prototype.onRoute = function (params) {
-//	const { Name, Path, PathParts, Search, Storage, Custom } = params
+	//	const { Name, Path, PathParts, Search, Storage, Custom } = params
 	if (params.Storage !== this.type) {
 		this.currentPath('');
 		this.currentOwner('');

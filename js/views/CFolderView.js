@@ -71,9 +71,13 @@ CFolderView.prototype.parseGetFilesResponse = function (response) {
 	this.subfolders(subfolders);
 };
 
-CFolderView.prototype.toggleExpanded = function (view, e) {
+CFolderView.prototype.expandButtonHandler = function (view, e) {
 	e.stopPropagation();
-	this.expanded(!this.expanded());
+	this.toggleExpanded();
+};
+
+CFolderView.prototype.toggleExpanded = function (bExpand) {
+	this.expanded(bExpand !== undefined ? bExpand : !this.expanded());
 	if (this.expanded()) {
 		const parameters = {
 			Type: this.type(),
