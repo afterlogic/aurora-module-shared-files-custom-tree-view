@@ -13,8 +13,13 @@
 .panel.left_panel .items_list.collapsible .item.accordion .collapse_handler.shared_files_custom__folder_collapse_handler {
 	&:before {
 		width: 16px;
+		transform: rotate(-90deg);
 	}
 	&.expanded:before {
-		transform: rotate(90deg);
+		transform: rotate(180deg);
+	}
+
+	&.empty {
+		opacity: 0.2;
 	}
 }

@@ -1,0 +1,11 @@
+.shared-files-custom__heading-title() {
+	@group-item-font-color: grey;
+	@group-item-font-shadow: none;
+
+	color: @group-item-font-color !important;
+	text-shadow: @group-item-font-shadow !important;
+}
+
+.panel.left_panel .items_list .item.shared_files_custom__heading .title {
+	.shared-files-custom__heading-title();
+}

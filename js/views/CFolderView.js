@@ -31,6 +31,7 @@ function CFolderView(folderData, level, folderViewConstructor)
 
 	this.subfolders = ko.observableArray([]);
 	this.expanded = ko.observable(false);
+	this.explicitlyNoSubfolders = ko.observable(false);
 }
 
 CFolderView.prototype.ViewTemplate = '%ModuleName%_FolderView';
@@ -54,12 +55,18 @@ CFolderView.prototype.parseGetFilesResponse = function (response) {
 			const folderView = this.subfolders().find(folderView => folderView.fullPath() === folderData.FullPath);
 			if (folderView) {
 				folderView.parse(folderData);
+				folderView.explicitlyNoSubfolders(false);
 				subfolders.push(folderView);
 			} else {
 				subfolders.push(new CSubfolderView(folderData, this.level + 1, CSubfolderView));
 			}
 		}
 	});
+	
+	this.explicitlyNoSubfolders(subfolders.length === 0 ? true : false);
+	if (subfolders.length === 0) {
+		this.expanded(false);
+	}
 
 	this.subfolders(subfolders);
 };
