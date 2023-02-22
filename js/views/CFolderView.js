@@ -55,7 +55,7 @@ CFolderView.prototype.parseGetFilesResponse = function (response) {
 			const folderView = this.subfolders().find(folderView => folderView.fullPath() === folderData.FullPath);
 			if (folderView) {
 				folderView.parse(folderData);
-				folderView.explicitlyNoSubfolders(false);
+				// folderView.explicitlyNoSubfolders(false);
 				subfolders.push(folderView);
 			} else {
 				subfolders.push(new CSubfolderView(folderData, this.level + 1, CSubfolderView));
@@ -79,6 +79,10 @@ CFolderView.prototype.expandButtonHandler = function (view, e) {
 CFolderView.prototype.toggleExpanded = function (bExpand) {
 	this.expanded(bExpand !== undefined ? bExpand : !this.expanded());
 	if (this.expanded()) {
+		this.subfolders().forEach((folderView) => {
+			folderView.explicitlyNoSubfolders(false);
+		});
+
 		const parameters = {
 			Type: this.type(),
 			Path: this.fullPath(),
