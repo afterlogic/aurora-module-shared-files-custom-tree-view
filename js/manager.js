@@ -18,7 +18,7 @@ module.exports = function (appData) {
 		return {
 			start() {
 				App.subscribeEvent('FilesWebclient::RegisterFilesController', (registerHandler) => {
-					registerHandler(require('modules/%ModuleName%/js/views/StorageView.js'), 'Storage');
+					registerHandler(require('modules/%ModuleName%/js/views/StoragesView.js'), 'Storage');
 				});
 			}
 		};

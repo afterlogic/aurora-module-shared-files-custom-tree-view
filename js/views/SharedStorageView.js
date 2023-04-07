@@ -16,22 +16,21 @@ const
 	SHARED_OWNER_PREFIX = 'sharedOwner.'
 ;
 
-function CStorageView()
+function CSharedStorageView()
 {
 	this.type = 'shared';
 	this.ownersData = ko.observableArray([]);
 	this.currentOwner = ko.observable('');
 	this.currentPath = ko.observable('');
-	this.currentPath.subscribe(function (v) {
-		if (v) {			
-			const parentPath = v.substring(0, v.lastIndexOf('/'));
+	this.currentPath.subscribe(function (currentPath) {
+		if (currentPath) {
+			const parentPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
 			let parentFolderView;
 			this.ownersData().forEach((ownerData) => {
 				if (!parentFolderView) {
 					parentFolderView = this.findDeepFolderView(ownerData.folders, parentPath);
 				}
 			});
-	
 			if (parentFolderView) {
 				parentFolderView.toggleExpanded(true);
 			}
@@ -57,20 +56,12 @@ function CStorageView()
 				}
 			}
 		}
-		if (oParams.Request.Module === 'Files' &&
-				oParams.Request.Method === 'GetStorages'
-		) {
-			if (Array.isArray(oParams.Response.Result)) {
-				oParams.Response.Result = oParams.Response.Result
-						.map(item => ({ ...item, HideInList: item.Type === this.type }));
-			}
-		}
 	});
 }
 
-CStorageView.prototype.ViewTemplate = '%ModuleName%_StorageView';
+CSharedStorageView.prototype.ViewTemplate = '%ModuleName%_SharedStorageView';
 
-CStorageView.prototype.findDeepFolderView = function (folders, path) {
+CSharedStorageView.prototype.findDeepFolderView = function (folders, path) {
 	let foundFolderView;
 	foundFolderView = folders.find(folderView => folderView.fullPath() === path);
 
@@ -84,14 +75,14 @@ CStorageView.prototype.findDeepFolderView = function (folders, path) {
 	return foundFolderView;
 };
 
-CStorageView.prototype.findFolderView = function (owner, fullPath) {
+CSharedStorageView.prototype.findFolderView = function (owner, fullPath) {
 	const ownerData = this.ownersData()
 			.find(ownerData => ownerData.owner === owner);
 	return ownerData && ownerData.folders
 			.find(folderView => folderView.fullPath() === fullPath);
 };
 
-CStorageView.prototype.parseRootSharedResponse = function (response) {
+CSharedStorageView.prototype.parseRootSharedResponse = function (response) {
 	const rawItems = Types.pArray(response && response.Result && response.Result.Items);
 	const ownersData = [];
 
@@ -121,7 +112,7 @@ CStorageView.prototype.parseRootSharedResponse = function (response) {
 	this.ownersData(ownersData);
 };
 
-CStorageView.prototype.onShow = function () {
+CSharedStorageView.prototype.onShow = function () {
 	const parameters = {
 		Type: this.type,
 		Path: '',
@@ -131,7 +122,7 @@ CStorageView.prototype.onShow = function () {
 	Ajax.send('%ModuleName%', 'GetFiles', parameters);
 };
 
-CStorageView.prototype.onRoute = function (params) {
+CSharedStorageView.prototype.onRoute = function (params) {
 	//	const { Name, Path, PathParts, Search, Storage, Custom } = params
 	if (params.Storage !== this.type) {
 		this.currentPath('');
@@ -165,8 +156,8 @@ CStorageView.prototype.onRoute = function (params) {
 	this.isFirstRoute = false;
 };
 
-CStorageView.prototype.routeOwnerFiles = function (owner) {
+CSharedStorageView.prototype.routeOwnerFiles = function (owner) {
 	Routing.setHash(LinksUtils.getFiles(this.type, '', '', { prefix: SHARED_OWNER_PREFIX, value: owner }));
 };
 
-module.exports = new CStorageView();
+module.exports = new CSharedStorageView();
