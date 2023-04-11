@@ -1,5 +1,6 @@
+<!-- $root here is CFilesView -->
 <div data-bind="attr: {'class': `item accordion canSelect shared_files_custom__folder_level${level}`},
-	 css: {'selected': (fullPath() === $root.currentPath() || (fullPath() + '/') === $root.currentPath())},
+	 css: {'selected': type() === $root.storageType() && (fullPath() === $root.currentPath() || (fullPath() + '/') === $root.currentPath())},
 	 click: function () { $root.routeFiles(type(), fullPath()); }"
 >
 	<a href="javascript: void(0);" class="title">

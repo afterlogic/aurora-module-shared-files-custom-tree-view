@@ -5,11 +5,11 @@ const
 
 	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 
-	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
-	App = require('%PathToCoreWebclientModule%/js/App.js'),
 	Routing = require('%PathToCoreWebclientModule%/js/Routing.js'),
 
 	LinksUtils = require('modules/FilesWebclient/js/utils/Links.js'),
+
+	FoldersUtils = require('modules/%ModuleName%/js/utils/Folders.js'),
 
 	CFolderView = require('modules/%ModuleName%/js/views/CFolderView.js'),
 
@@ -28,7 +28,7 @@ function CSharedStorageView()
 			let parentFolderView;
 			this.ownersData().forEach((ownerData) => {
 				if (!parentFolderView) {
-					parentFolderView = this.findDeepFolderView(ownerData.folders, parentPath);
+					parentFolderView = FoldersUtils.findDeepFolderView(ownerData.folders, parentPath);
 				}
 			});
 			if (parentFolderView) {
@@ -38,41 +38,21 @@ function CSharedStorageView()
 	}, this);
 
 	this.isFirstRoute = true;
-
-	App.subscribeEvent('ReceiveAjaxResponse::before', (oParams) => {
-		const requestParams = oParams.Request.Parameters;
-		if ((oParams.Request.Module === 'Files' || oParams.Request.Module === 'SharedFilesCustomTreeView') &&
-				oParams.Request.Method === 'GetFiles' &&
-				requestParams.Type === this.type
-		) {
-			if (requestParams.Path === '' && requestParams.Pattern === '') {
-				this.parseRootSharedResponse(oParams.Response);
-			}
-			if (requestParams.Path === '' && this.currentOwner() !== '') {
-				const rawItems = Types.pArray(oParams.Response && oParams.Response.Result && oParams.Response.Result.Items);
-				if (Array.isArray(rawItems)) {
-					oParams.Response.Result.Items = rawItems
-							.filter(item => !item.IsFolder && item.Owner === this.currentOwner());
-				}
-			}
-		}
-	});
 }
 
 CSharedStorageView.prototype.ViewTemplate = '%ModuleName%_SharedStorageView';
 
-CSharedStorageView.prototype.findDeepFolderView = function (folders, path) {
-	let foundFolderView;
-	foundFolderView = folders.find(folderView => folderView.fullPath() === path);
-
-	if (!foundFolderView) {
-		folders.forEach((folderView) => {
-			if (!foundFolderView) {
-				foundFolderView = this.findDeepFolderView(folderView.subfolders(), path);
-			}
-		});
+CSharedStorageView.prototype.parseFilesResponse = function (params) {
+	if (this.currentOwner() === '' && params.Request.Parameters.Pattern === '') {
+		this.parseRootSharedResponse(params.Response);
 	}
-	return foundFolderView;
+	if (this.currentOwner() !== '') {
+		const rawItems = Types.pArray(params.Response && params.Response.Result && params.Response.Result.Items);
+		if (Array.isArray(rawItems)) {
+			params.Response.Result.Items = rawItems
+					.filter(item => !item.IsFolder && item.Owner === this.currentOwner());
+		}
+	}
 };
 
 CSharedStorageView.prototype.findFolderView = function (owner, fullPath) {
@@ -110,16 +90,6 @@ CSharedStorageView.prototype.parseRootSharedResponse = function (response) {
 	});
 
 	this.ownersData(ownersData);
-};
-
-CSharedStorageView.prototype.onShow = function () {
-	const parameters = {
-		Type: this.type,
-		Path: '',
-		Pattern: '',
-		PathRequired: false
-	};
-	Ajax.send('%ModuleName%', 'GetFiles', parameters);
 };
 
 CSharedStorageView.prototype.onRoute = function (params) {

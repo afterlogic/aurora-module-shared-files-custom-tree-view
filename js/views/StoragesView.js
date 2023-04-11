@@ -3,6 +3,7 @@
 const
 	ko = require('knockout'),
 
+	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	App = require('%PathToCoreWebclientModule%/js/App.js'),
 
 	CCommonStorageView = require('modules/%ModuleName%/js/views/CCommonStorageView.js'),
@@ -16,8 +17,13 @@ function CStoragesView()
 	this.storagesViews = ko.observableArray([]);
 
 	App.subscribeEvent('ReceiveAjaxResponse::before', (oParams) => {
-		if (oParams.Request.Module === 'Files' &&
-				oParams.Request.Method === 'GetStorages'
+		const request = oParams.Request;
+		if (!request) {
+			return;
+		}
+
+		if (request.Module === 'Files' &&
+				request.Method === 'GetStorages'
 		) {
 			if (Array.isArray(oParams.Response.Result)) {
 				this.storagesViews(oParams.Response.Result.map(storage => {
@@ -33,6 +39,17 @@ function CStoragesView()
 						.map(item => ({ ...item, HideInList: true }));
 			}
 		}
+
+		if ((request.Module === 'Files' || request.Module === 'SharedFilesCustomTreeView') &&
+				request.Method === 'GetFiles' &&
+				request.Parameters.Path === ''
+		) {
+			this.storagesViews().forEach(storageView => {
+				if (request.Parameters.Type === storageView.type) {
+					storageView.parseFilesResponse(oParams);
+				}
+			});
+		}
 	});
 }
 
@@ -44,9 +61,13 @@ CStoragesView.prototype.useFilesViewData = function (filesView) {
 
 CStoragesView.prototype.onShow = function () {
 	this.storagesViews().forEach(storageView => {
-		if (typeof storageView.onShow === 'function') {
-			storageView.onShow();
-		}
+		const parameters = {
+			Type: storageView.type,
+			Path: '',
+			Pattern: '',
+			PathRequired: false
+		};
+		Ajax.send('%ModuleName%', 'GetFiles', parameters);
 	});
 	this.isShown(true);
 };
@@ -60,11 +81,6 @@ CStoragesView.prototype.onRoute = function (params) {
 };
 
 CStoragesView.prototype.onHide = function () {
-	this.storagesViews().forEach(storageView => {
-		if (typeof storageView.onHide === 'function') {
-			storageView.onHide();
-		}
-	});
 	this.isShown(false);
 };
 

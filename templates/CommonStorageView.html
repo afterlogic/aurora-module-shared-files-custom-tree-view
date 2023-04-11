@@ -1,4 +1,6 @@
-<div class="item canSelect" data-bind="css: {'selected': type === $parent.filesView().storageType()}">
+<div class="item canSelect"
+	 data-bind="css: {'selected': type === $parent.filesView().storageType() && $parent.currentPath() === ''}"
+>
 	<a href="javascript: void(0);" class="title" data-bind="
 		droppable: {valueFunc: droppable() ? function (oEvent, oUi) {$parent.filesView().filesDrop($data, oEvent, oUi);} : null},
 		click: function () { $parent.filesView().routeFiles(type); }">
@@ -8,3 +10,6 @@
 		</span>
 	</a>
 </div>
+<!-- ko foreach: folders -->
+	<!-- ko template: { name: $data.ViewTemplate, data: $data} --><!-- /ko -->
+<!-- /ko -->
